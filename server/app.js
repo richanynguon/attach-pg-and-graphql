@@ -1,14 +1,24 @@
+require("dotenv").config();
 const express = require("express");
 const graphqlHTTP = require("express-graphql");
 const schema = require("./schema/schema");
+const models = require("./models");
+
+const port = require("./config").port;
 
 const app = express();
 
-app.use("/graphql", graphqlHTTP({
-  schema,
-  graphiql: true,
-}));
+app.use(
+	"/graphql",
+	graphqlHTTP({
+		schema,
+		graphiql: true
+	})
+);
 
-app.listen(4000, () => {
-	console.log("Now listening on 4000");
+models.sequelize.sync().then(() => {
+	app.listen(port, () => {
+		console.log(`Now listening on ${port}`);
+	});
 });
+
